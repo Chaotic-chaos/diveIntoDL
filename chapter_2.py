@@ -38,10 +38,19 @@ n = torch.randn_like(x, dtype=torch.float) # 自定义新的数据类型
     1. 返回的torch.Size()是一个tuple
     2. 其支持tuple所有原生操作
 '''
-# print(x.size())
+# print(x.size())xh
 # print(x.shape)
 
 '''item()函数的使用'''
 x = torch.randn(1)
 # print(x)
 # print(x.item())
+
+'''CPU和GPU之间的tensor传递'''
+
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+    y = torch.ones_like(x, device=device)
+    x = x.to(device)
+    z = x + y
+    print(z)
