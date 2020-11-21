@@ -47,7 +47,6 @@ x = torch.randn(1)
 # print(x.item())
 
 '''CPU和GPU之间的tensor传递'''
-
 if torch.cuda.is_available():
     device = torch.device("cuda")
     y = torch.ones_like(x, device=device)
