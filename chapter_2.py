@@ -53,3 +53,23 @@ if torch.cuda.is_available():
     x = x.to(device)
     z = x + y
     print(z)
+
+'''自动求梯度'''
+x2 = torch.ones(2, 2, requires_grad=True)
+# print(x2)
+# print(x2.grad_fn)
+y2 = x2 + 2
+# print(y2)
+# print(y2.grad_fn)
+# print(x2.is_leaf)
+# print(y2.is_leaf)
+# 复杂的操作
+z2 = y2 * y2 * 3
+out = z2.mean()
+# print(z2, out)
+# .requires_grad_()采用in-place的方式改变requires_grad的属性
+x3 = torch.randn(2, 2) # 默认情况下requies_grad=False
+x3 = x3 * x3 + 1
+# print(x3.requires_grad)
+x3.requires_grad_(True)
+# print(x3.requires_grad)
