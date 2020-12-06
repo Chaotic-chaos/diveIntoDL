@@ -14,7 +14,8 @@ import torch.utils.data as Data
 # # 生成第二个特征与标签之间的散点图
 # set_figsize()
 # plt.scatter(features[:, 1].numpy(), labels.numpy(), 1)
-from torch import nn
+from torch import nn, optim
+from torch.nn import init
 
 '''
     线性回归 - 简洁实现
@@ -41,7 +42,7 @@ data_iter = Data.DataLoader(dataset, batch_size, shuffle=True)
 #     print(X, y)
 #     break
 
-'''定义模型'''
+'''定义模型：方法一'''
 class LinearNet(nn.Module):
     def __init__(self, n_feature):
         '''
@@ -58,4 +59,32 @@ class LinearNet(nn.Module):
 
 net = LinearNet(num_inputs)
 # 打印网络结构
-print(net)
+# print(net)
+
+
+'''初始化模型参数(w, b)'''
+init.normal_(net.linear.weight, mean=0, std=0.01) # param1: 要初始化的参数； param2: 均值； param3: 标准差
+init.constant_(net.linear.bias, val=0) # param1: 要初始化的参数； param2: 初始化值
+
+'''定义损失函数'''
+loss = nn.MSELoss() # 均方误差损失
+
+'''定义优化算法'''
+optimizer = optim.SGD(net.linear.parameters(), lr=0.03) # param1: 优化参数; param2: 学习率
+# print(optimizer)
+
+'''训练模型'''
+num_epochs = 1000
+for epoch in range(1, num_epochs + 1):
+    for X, y in data_iter:
+        output = net(X)
+        l = loss(output, y.view(-1, 1))
+        optimizer.zero_grad() # 梯度清零
+        l.backward() # 反向传播
+        optimizer.step() # 模型迭代
+    print('epoch {}, loss: {}'.format(epoch, l.item()))
+print("\n\n\n\n\n")
+'''对比学到的模型与真实的模型参数'''
+print("true_w: {}\nlearn_w: {}".format(true_w, net.linear.weight.data))
+print('--------------------------------------------')
+print("true_b: {}\nlearn_b: {}".format(true_b, net.linear.bias.data))
